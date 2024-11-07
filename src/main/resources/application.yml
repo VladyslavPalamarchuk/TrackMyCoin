@@ -1,1 +1,10 @@
-spring.application.name=trackmycoin
+telegram:
+  bot:
+    token: ${TELEGRAM_BOT_TOKEN}
+
+spring:
+  datasource:
+    url: ${POSTGRESQL_JDBC_URL}
+    username: ${POSTGRESQL_USERNAME}
+    password: ${POSTGRESQL_PASSWORD}
+    driver-class-name: org.postgresql.Driver
