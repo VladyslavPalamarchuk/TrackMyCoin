@@ -17,7 +17,7 @@ public class StartCommandProcessor implements CommandProcessor {
 
   @Override
   public void process(Update update) {
-    telegramBotClient.sendWelcomeMessage(
+    telegramBotClient.sendMessage(
         update.getMessage().getChatId(), telegramBotDescription.getStart());
   }
 

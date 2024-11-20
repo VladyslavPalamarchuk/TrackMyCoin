@@ -16,8 +16,8 @@ public class NonCommandProcessor implements CommandProcessor {
 
   @Override
   public void process(Update update) {
-    telegramBotClient.sendWelcomeMessage(
-        update.getMessage().getChatId(), telegramBotDescription.getNon_command());
+    telegramBotClient.sendMessage(
+        update.getMessage().getChatId(), telegramBotDescription.getNonCommand());
   }
 
   @Override

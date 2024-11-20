@@ -17,7 +17,7 @@ public class InfoCommandProcessor implements CommandProcessor {
 
   @Override
   public void process(Update update) {
-    telegramBotClient.sendWelcomeMessage(
+    telegramBotClient.sendMessage(
         update.getMessage().getChatId(), telegramBotDescription.getInfo());
   }
 

@@ -19,8 +19,9 @@ public class TelegramBotConsumer implements LongPollingSingleThreadUpdateConsume
   @Override
   public void consume(Update update) {
     if (update.hasMessage() && update.getMessage().hasText()) {
-      CommandProcessor processMessage = commandProcessorRegistry.get(update.getMessage().getText());
-      processMessage.process(update);
+      CommandProcessor commandProcessor =
+          commandProcessorRegistry.get(update.getMessage().getText());
+      commandProcessor.process(update);
       logUpdateMessage(update.getMessage());
     }
   }

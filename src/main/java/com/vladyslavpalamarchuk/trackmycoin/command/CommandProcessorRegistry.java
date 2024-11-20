@@ -25,9 +25,9 @@ public class CommandProcessorRegistry {
     }
 
     return Arrays.stream(Command.values())
-            .filter(c -> c.getCommand().equalsIgnoreCase(messageText))
-            .findFirst()
-            .map(commandToProcessors::get)
-            .orElse(commandToProcessors.get(Command.NON_COMMAND));
+        .filter(c -> c.getCommand().equalsIgnoreCase(messageText))
+        .findFirst()
+        .map(commandToProcessors::get)
+        .orElse(commandToProcessors.get(Command.NON_COMMAND));
   }
 }

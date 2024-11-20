@@ -15,5 +15,5 @@ public class TelegramBotDescription {
 
   private String help;
 
-  private String non_command;
+  private String nonCommand;
 }

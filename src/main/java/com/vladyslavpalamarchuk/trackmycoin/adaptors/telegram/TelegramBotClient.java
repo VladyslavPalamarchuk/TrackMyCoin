@@ -14,12 +14,12 @@ public class TelegramBotClient {
 
   private final TelegramClient telegramClient;
 
-  public void sendWelcomeMessage(Long chatId, String messageText) {
+  public void sendMessage(Long chatId, String messageText) {
     SendMessage message = SendMessage.builder().chatId(chatId).text(messageText).build();
     try {
       telegramClient.execute(message);
     } catch (TelegramApiException e) {
-      log.error(e.getMessage());
+      log.error("Fail to send telegram message to chatId: {}", chatId, e);
     }
   }
 }
