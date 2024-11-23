@@ -8,3 +8,18 @@ spring:
     username: ${POSTGRESQL_USERNAME}
     password: ${POSTGRESQL_PASSWORD}
     driver-class-name: org.postgresql.Driver
+description:
+  start: "Welcome to TrackMyCoin 📈💰!
+          \n\nThis bot helps you track cryptocurrency prices
+          and will send you notifications when your target price 
+          is reached.
+          \n\nFor more information about the bot, type /info."
+  info: "TrackMyCoin — your crypto assistant 📈💰!
+  
+         \nEasily track cryptocurrency prices and get notified
+         when your target price is reached.
+         \nPerfect for traders and crypto enthusiasts!
+  
+         \nType /help for a list of all commands."
+  help: "List of commands 👾\nInfo -> /info\nHelp -> /help"
+  non_command: "non command /help "
