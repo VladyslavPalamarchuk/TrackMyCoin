@@ -9,6 +9,8 @@ public enum Command {
   START("/start"),
   INFO("/info"),
   HELP("/help"),
+  GETMONITOR("/get"),
+  ADDMONITOR("/add"),
   NON_COMMAND("");
 
   private final String command;

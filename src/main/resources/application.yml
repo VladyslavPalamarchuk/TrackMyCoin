@@ -25,5 +25,5 @@ description:
          \nPerfect for traders and crypto enthusiasts!
   
          \nType /help for a list of all commands."
-  help: "List of commands 👾\nInfo -> /info\nHelp -> /help"
+  help: "List of commands 👾\nInfo -> /info\nHelp -> /help\nGet monitors -> /get\nAdd monitor -> /add"
   non_command: "non command /help "
