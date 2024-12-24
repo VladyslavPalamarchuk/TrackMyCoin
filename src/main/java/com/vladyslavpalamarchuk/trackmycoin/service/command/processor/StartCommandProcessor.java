@@ -1,14 +1,16 @@
-package com.vladyslavpalamarchuk.trackmycoin.command.processor;
+package com.vladyslavpalamarchuk.trackmycoin.service.command.processor;
 
 import com.vladyslavpalamarchuk.trackmycoin.adaptors.persistence.UserRepository;
 import com.vladyslavpalamarchuk.trackmycoin.adaptors.telegram.TelegramBotClient;
-import com.vladyslavpalamarchuk.trackmycoin.command.Command;
 import com.vladyslavpalamarchuk.trackmycoin.config.TelegramBotDescription;
+import com.vladyslavpalamarchuk.trackmycoin.config.TelegramBotKeyboardConfig;
 import com.vladyslavpalamarchuk.trackmycoin.domain.User;
+import com.vladyslavpalamarchuk.trackmycoin.service.command.Command;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 
 @Slf4j
 @Component
@@ -18,16 +20,19 @@ public class StartCommandProcessor implements CommandProcessor {
   private final TelegramBotClient telegramBotClient;
   private final TelegramBotDescription telegramBotDescription;
   private final UserRepository userRepository;
+  private final TelegramBotKeyboardConfig telegramBotKeyboardConfig;
 
   @Override
   public void process(Update update) {
     Long chatId = update.getMessage().getChatId();
+    ReplyKeyboardMarkup keyboardMarkup = telegramBotKeyboardConfig.buildKeyboard();
 
     userRepository
         .findByChatId(chatId)
         .ifPresentOrElse(
             user -> {
-              telegramBotClient.sendMessage(chatId, telegramBotDescription.getStart());
+              telegramBotClient.sendMessageWithKeyboard(
+                  chatId, telegramBotDescription.getStart(), keyboardMarkup);
             },
             () -> {
               User newUser = new User();
@@ -35,7 +40,8 @@ public class StartCommandProcessor implements CommandProcessor {
               newUser.setCreatedBy("bot");
               newUser.setUpdatedBy("bot");
               userRepository.save(newUser);
-              telegramBotClient.sendMessage(chatId, telegramBotDescription.getStart());
+              telegramBotClient.sendMessageWithKeyboard(
+                  chatId, telegramBotDescription.getStart(), keyboardMarkup);
             });
   }
 

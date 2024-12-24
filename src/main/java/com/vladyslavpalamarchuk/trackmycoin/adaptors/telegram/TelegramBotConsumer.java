@@ -1,6 +1,6 @@
 package com.vladyslavpalamarchuk.trackmycoin.adaptors.telegram;
 
-import com.vladyslavpalamarchuk.trackmycoin.command.CommandProcessorRegistry;
+import com.vladyslavpalamarchuk.trackmycoin.service.command.CommandProcessorRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,6 @@
-package com.vladyslavpalamarchuk.trackmycoin.command;
+package com.vladyslavpalamarchuk.trackmycoin.service.command;
 
-import com.vladyslavpalamarchuk.trackmycoin.command.processor.CommandProcessor;
+import com.vladyslavpalamarchuk.trackmycoin.service.command.processor.CommandProcessor;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -18,11 +18,7 @@ public class CommandProcessorRegistry {
   public CommandProcessorRegistry(List<CommandProcessor> processors) {
     commandToProcessors =
         processors.stream()
-            .collect(
-                Collectors.toMap(
-                    com.vladyslavpalamarchuk.trackmycoin.command.processor.CommandProcessor
-                        ::getCommand,
-                    Function.identity()));
+            .collect(Collectors.toMap(CommandProcessor::getCommand, Function.identity()));
   }
 
   public CommandProcessor get(Long chatId, String messageText) {
@@ -30,13 +26,15 @@ public class CommandProcessorRegistry {
 
     if (!messageText.startsWith("/")) {
       Command lastCommand = userLastCommands.get(chatId);
-      if (lastCommand == Command.ADDMONITOR) {
-        return commandToProcessors.get(Command.ADDMONITOR);
+      if (lastCommand == Command.ADD_MONITOR) {
+        return commandToProcessors.get(Command.ADD_MONITOR);
+      }
+      if (lastCommand == Command.REMOVE_MONITOR) {
+        return commandToProcessors.get(Command.REMOVE_MONITOR);
       }
       return commandToProcessors.get(Command.NON_COMMAND);
     }
 
-    // Знаходимо відповідну команду
     String finalMessageText = messageText;
     Command matchedCommand =
         Arrays.stream(Command.values())

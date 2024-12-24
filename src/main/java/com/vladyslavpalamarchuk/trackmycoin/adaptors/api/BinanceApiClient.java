@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -20,11 +21,23 @@ public class BinanceApiClient {
   public boolean isCoinAvailable(String ticker) {
     String url = BINANCE_URL + ticker.toUpperCase() + TICKER_CURRENCY;
     try {
-      restTemplate.getForEntity(url, String.class);
-      return true;
-    } catch (HttpClientErrorException.NotFound e) {
-      log.warn("Coin not available: {}", ticker);
-      return false;
+      ResponseEntity<BinancePriceResponse> response =
+          restTemplate.getForEntity(url, BinancePriceResponse.class);
+      BinancePriceResponse priceResponse = response.getBody();
+
+      if (priceResponse != null && priceResponse.getSymbol() != null) {
+        log.info("Coin available: {}", priceResponse.getSymbol());
+        return true;
+      } else {
+        log.warn("Coin response is null or invalid for ticker: {}", ticker);
+        return false;
+      }
+    } catch (HttpClientErrorException.BadRequest e) {
+      if (e.getResponseBodyAsString().contains("Invalid symbol")) {
+        log.warn("Invalid symbol: {}", ticker);
+        return false;
+      }
+      throw e;
     } catch (Exception e) {
       log.error("Error while checking coin availability", e);
       return false;

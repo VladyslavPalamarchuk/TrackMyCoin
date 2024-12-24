@@ -1,7 +1,6 @@
 telegram:
   bot:
     token: ${TELEGRAM_BOT_TOKEN}
-
 spring:
   datasource:
     url: ${POSTGRESQL_JDBC_URL}
@@ -12,18 +11,16 @@ spring:
     enabled: true
     locations: classpath:db.migration
     baseline-on-migrate: true
+schedule:
+  monitoring-check-rate-millis: 1000
+
 description:
-  start: "Welcome to TrackMyCoin 📈💰!
-          \n\nThis bot helps you track cryptocurrency prices
-          and will send you notifications when your target price 
-          is reached.
-          \n\nFor more information about the bot, type /info."
-  info: "TrackMyCoin — your crypto assistant 📈💰!
-  
-         \nEasily track cryptocurrency prices and get notified
+  start: "Welcome to TrackMyCoin — your ultimate crypto tracker! 🚀         
+   \n\nFor more information about the bot, type /info."
+  info: "TrackMyCoin — your crypto assistant 💰!\n
+         \nEasily track cryptocurrency prices and\nget notified
          when your target price is reached.
-         \nPerfect for traders and crypto enthusiasts!
-  
+         \nPerfect for traders and crypto enthusiasts!\n
          \nType /help for a list of all commands."
-  help: "List of commands 👾\nInfo -> /info\nHelp -> /help\nGet monitors -> /get\nAdd monitor -> /add"
-  non_command: "non command /help "
+  help: "List of commands 👾\n\nGet monitors -> /get\nAdd monitor -> /add\nRemove monitor -> /remove\nInfo -> /info\nHelp -> /help"
+  non_command: "non command❌ \n/help "
