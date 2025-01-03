@@ -13,6 +13,6 @@ public interface MonitoringRepository extends JpaRepository<Monitoring, Long> {
 
   List<Monitoring> findByTickerAndTargetPrice(String ticker, BigDecimal targetPrice);
 
-  List<Monitoring> findByUser_ChatIdAndTickerAndTargetPrice(
+  List<Monitoring> findByUserChatIdAndTickerAndTargetPrice(
       Long chatId, String ticker, BigDecimal targetPrice);
 }

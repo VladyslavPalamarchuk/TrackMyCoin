@@ -35,14 +35,17 @@ public class StartCommandProcessor implements CommandProcessor {
                   chatId, telegramBotDescription.getStart(), keyboardMarkup);
             },
             () -> {
-              User newUser = new User();
-              newUser.setChatId(chatId);
-              newUser.setCreatedBy("bot");
-              newUser.setUpdatedBy("bot");
-              userRepository.save(newUser);
-              telegramBotClient.sendMessageWithKeyboard(
-                  chatId, telegramBotDescription.getStart(), keyboardMarkup);
+              createUser(chatId, keyboardMarkup);
             });
+  }
+
+  private void createUser(Long chatId, ReplyKeyboardMarkup keyboardMarkup) {
+    User newUser = new User();
+    newUser.setChatId(chatId);
+    newUser.setCreatedBy("bot");
+    newUser.setUpdatedBy("bot");
+    userRepository.save(newUser);
+    telegramBotClient.sendMessageWithKeyboard(chatId, telegramBotDescription.getStart(), keyboardMarkup);
   }
 
   @Override

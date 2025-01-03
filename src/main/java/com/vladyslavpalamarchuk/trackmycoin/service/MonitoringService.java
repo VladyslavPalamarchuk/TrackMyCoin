@@ -43,15 +43,16 @@ public class MonitoringService {
 
     monitorings.stream()
         .filter(monitoring -> isTargetPriceReached(currentPrice, monitoring.getTargetPrice()))
-        .forEach(
-            monitoring -> {
-              monitoringRepository.delete(monitoring);
-              telegramBotClient.sendMessage(
-                  monitoring.getUser().getChatId(),
-                  String.format(
-                      "Target price reached for %s: %.2f 🎯",
-                      monitoring.getTicker(), monitoring.getTargetPrice()));
-            });
+        .forEach(this::remove);
+  }
+
+  private void remove(Monitoring monitoring) {
+    monitoringRepository.delete(monitoring);
+    telegramBotClient.sendMessage(
+        monitoring.getUser().getChatId(),
+        String.format(
+            "Target price reached for %s: %.2f 🎯",
+            monitoring.getTicker(), monitoring.getTargetPrice()));
   }
 
   private boolean isTargetPriceReached(BigDecimal currentPrice, BigDecimal targetPrice) {

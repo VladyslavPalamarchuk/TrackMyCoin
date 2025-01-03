@@ -18,6 +18,7 @@ public class GetMonitoringCommandProcessor implements CommandProcessor {
   private final UserRepository userRepository;
   private final MonitoringRepository monitoringRepository;
   private final TelegramBotClient telegramBotClient;
+  private final String STRING_USDT = "USDT";
 
   @Override
   public void process(Update update) {
@@ -40,12 +41,19 @@ public class GetMonitoringCommandProcessor implements CommandProcessor {
 
     StringBuilder message = new StringBuilder("Your active monitorings: 📊\n\n");
     for (Monitoring monitoring : monitorings) {
-      String formattedPrice =
-          monitoring.getTargetPrice().compareTo(BigDecimal.ONE) < 0
-              ? String.format("%.8f", monitoring.getTargetPrice())
-              : String.format("%.2f", monitoring.getTargetPrice());
+      String formattedPrice;
 
-      message.append(String.format("⚜️ %s: %s\n\n", monitoring.getTicker(), formattedPrice));
+      if (monitoring.getTargetPrice().doubleValue() % 1 == 0) {
+        formattedPrice = String.format("%.0f", monitoring.getTargetPrice());
+      } else {
+        formattedPrice =
+            monitoring.getTargetPrice().compareTo(BigDecimal.ONE) < 0
+                ? String.format("%.8f", monitoring.getTargetPrice())
+                : String.format("%.2f", monitoring.getTargetPrice());
+      }
+
+      message.append(
+          String.format("⚜️ %s: %s\n\n", monitoring.getTicker().replace(STRING_USDT, ""), formattedPrice));
     }
     return message.toString();
   }

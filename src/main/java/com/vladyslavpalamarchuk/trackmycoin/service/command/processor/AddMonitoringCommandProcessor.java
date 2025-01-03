@@ -21,11 +21,10 @@ public class AddMonitoringCommandProcessor implements CommandProcessor {
   private final TelegramBotClient telegramBotClient;
   private final MonitoringRepository monitoringRepository;
   private final UserRepository userRepository;
-
   private final String ADD_COMMAND = Command.ADD_MONITOR.getCommand();
-  private final int PART_LENGTH = 2;
-  private final String TICKER_CURRENCY = "USDT";
+  private final int EXPECTED_INPUT_LENGTH = 2;
   private final String USER_PREFIX = "User_";
+  private final String USDT_TICKER = "USDT";
 
   @Override
   public void process(Update update) {
@@ -34,7 +33,7 @@ public class AddMonitoringCommandProcessor implements CommandProcessor {
 
     if (userMessage.equalsIgnoreCase(ADD_COMMAND)) {
       telegramBotClient.sendMessage(
-          chatId, "Please enter the coin ticker and its current price\nfor example -> ETH 4000");
+          chatId, "Please enter the coin ticker and its current price.\nFor example -> ETH 4000");
       return;
     }
     handleTickerInput(update);
@@ -43,7 +42,7 @@ public class AddMonitoringCommandProcessor implements CommandProcessor {
   private void handleTickerInput(Update update) {
     String[] inputParts = extractAndValidateInput(update, getChatId(update));
     if (inputParts != null) {
-      processValidTicker(getChatId(update), inputParts[0], inputParts[1]);
+      processValidTicker(getChatId(update), inputParts[0] + USDT_TICKER, inputParts[1]);
     }
   }
 
@@ -53,7 +52,7 @@ public class AddMonitoringCommandProcessor implements CommandProcessor {
 
   private String[] extractAndValidateInput(Update update, Long chatId) {
     String[] parts = update.getMessage().getText().split(" ");
-    if (parts.length != PART_LENGTH) {
+    if (parts.length != EXPECTED_INPUT_LENGTH) {
       telegramBotClient.sendMessage(
           chatId, "Please enter two values: the coin ticker and its current price ⚠️");
       return null;
@@ -62,18 +61,21 @@ public class AddMonitoringCommandProcessor implements CommandProcessor {
   }
 
   private void processValidTicker(Long chatId, String ticker, String price) {
-    if (isCoinAvailable(ticker) && formatPrice(price).isPresent()) {
-      addTickerToMonitoring(ticker, formatPrice(price).get(), chatId);
+    Optional<BigDecimal> formatPrice = formatPrice(price);
+
+    if (isTickerAvailable(ticker) && formatPrice.isPresent()) {
+      addTickerToMonitoring(ticker, formatPrice.get(), chatId);
     } else {
-      sendCoinNotFoundMessage(chatId);
+      sendTickerNotFoundMessage(chatId);
     }
+  }
+
+  private boolean isTickerAvailable(String ticker) {
+    return binanceApiClient.getPrice(ticker).isPresent();
   }
 
   private Optional<BigDecimal> formatPrice(String price) {
     String formatResult = price.replace(",", ".");
-    if (formatResult.trim().isEmpty()) {
-      return Optional.empty();
-    }
     try {
       return Optional.of(new BigDecimal(formatResult));
     } catch (NumberFormatException e) {
@@ -81,24 +83,19 @@ public class AddMonitoringCommandProcessor implements CommandProcessor {
     }
   }
 
-  private boolean isCoinAvailable(String ticker) {
-    return binanceApiClient.isCoinAvailable(ticker);
-  }
-
   private void addTickerToMonitoring(String ticker, BigDecimal price, Long chatId) {
-    add(ticker, price, chatId);
+    addMonitoring(ticker, price, chatId);
     telegramBotClient.sendMessage(chatId, "The coin is available! Monitoring successfully added ✅");
   }
 
-  private void sendCoinNotFoundMessage(Long chatId) {
+  private void sendTickerNotFoundMessage(Long chatId) {
     telegramBotClient.sendMessage(chatId, "Coin not found. Please try again ❌");
   }
 
-  public void add(String ticker, BigDecimal price, long chatId) {
+  private void addMonitoring(String ticker, BigDecimal price, long chatId) {
     Monitoring monitoring = new Monitoring();
-    monitoring.setTicker(ticker.toUpperCase() + TICKER_CURRENCY);
+    monitoring.setTicker(ticker.toUpperCase());
     monitoring.setTargetPrice(price);
-
     User user = userRepository.findByChatId(chatId).orElse(null);
     monitoring.setUser(user);
     monitoring.setCreatedBy(USER_PREFIX + chatId);

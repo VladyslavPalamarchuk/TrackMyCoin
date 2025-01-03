@@ -1,6 +1,8 @@
 package com.vladyslavpalamarchuk.trackmycoin.config;
 
 import java.util.*;
+
+import com.vladyslavpalamarchuk.trackmycoin.service.command.Command;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardButton;
@@ -9,9 +11,9 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.Keyboard
 @Component
 public class TelegramBotKeyboardConfig {
 
-  public final List<String> FIRST_ROW_COMMANDS = List.of("/get", "/add");
+  public final List<String> FIRST_ROW_COMMANDS = List.of(Command.GET_MONITOR.getCommand(), Command.ADD_MONITOR.getCommand());
 
-  public final List<String> SECOND_ROW_COMMANDS = List.of("/remove", "/info");
+  public final List<String> SECOND_ROW_COMMANDS = List.of(Command.REMOVE_MONITOR.getCommand(), Command.HELP.getCommand());
 
   public ReplyKeyboardMarkup buildKeyboard() {
 
@@ -21,14 +23,10 @@ public class TelegramBotKeyboardConfig {
     List<KeyboardRow> keyboard = new ArrayList<>();
 
     KeyboardRow row = new KeyboardRow();
-    for (String command : FIRST_ROW_COMMANDS) {
-      row.add(new KeyboardButton(command));
-    }
+    FIRST_ROW_COMMANDS.stream().map(KeyboardButton::new).forEach(row::add);
 
     KeyboardRow row2 = new KeyboardRow();
-    for (String command : SECOND_ROW_COMMANDS) {
-      row2.add(new KeyboardButton(command));
-    }
+    SECOND_ROW_COMMANDS.stream().map(KeyboardButton::new).forEach(row2::add);
 
     keyboard.add(row);
     keyboard.add(row2);

@@ -12,7 +12,6 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 public class NonCommandProcessor implements CommandProcessor {
 
   private final TelegramBotClient telegramBotClient;
-
   private final TelegramBotDescription telegramBotDescription;
 
   @Override

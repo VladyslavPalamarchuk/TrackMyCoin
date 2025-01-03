@@ -15,12 +15,14 @@ schedule:
   monitoring-check-rate-millis: 1000
 
 description:
-  start: "Welcome to TrackMyCoin — your ultimate crypto tracker! 🚀         
-   \n\nFor more information about the bot, type /info."
-  info: "TrackMyCoin — your crypto assistant 💰!\n
-         \nEasily track cryptocurrency prices and\nget notified
-         when your target price is reached.
-         \nPerfect for traders and crypto enthusiasts!\n
-         \nType /help for a list of all commands."
+  start: "Welcome to TrackMyCoin — your ultimate crypto tracker! 🚀      
+\n\nThis bot helps you track cryptocurrency prices
+\nand notifies you when your target prices are reached.\n   
+   \nFor more information about the bot, type /info."
+  info: "How to use the bot?\n\nUse the buttons to access all commands easily.
+\nAdd monitors for the cryptocurrencies you want to track.
+\nGet notifications as soon as the price reaches your target.
+\nCheck your active monitors or remove the ones you no longer need.
+\nDesigned for simplicity and convenience, the bot makes crypto tracking effortless!\n\nReady to start? Add your first monitor now 🚀  /add"
   help: "List of commands 👾\n\nGet monitors -> /get\nAdd monitor -> /add\nRemove monitor -> /remove\nInfo -> /info\nHelp -> /help"
   non_command: "non command❌ \n/help "

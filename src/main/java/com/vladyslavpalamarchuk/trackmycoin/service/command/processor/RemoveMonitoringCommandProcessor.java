@@ -17,11 +17,10 @@ public class RemoveMonitoringCommandProcessor implements CommandProcessor {
 
   private final TelegramBotClient telegramBotClient;
   private final MonitoringRepository monitoringRepository;
-
   private final String REMOVE_COMMAND = Command.REMOVE_MONITOR.getCommand();
   private final int EXPECTED_INPUT_LENGTH = 2;
-  private final String TICKER_CURRENCY = "USDT";
-  private List<Monitoring> Monitorings;
+  private final String USDT_TICKER = "USDT";
+  private List<Monitoring> monitorings;
 
   @Override
   public void process(Update update) {
@@ -30,7 +29,7 @@ public class RemoveMonitoringCommandProcessor implements CommandProcessor {
 
     if (userMessage.equalsIgnoreCase(REMOVE_COMMAND)) {
       telegramBotClient.sendMessage(
-          chatId, "Please enter the coin ticker and its current price\nfor example -> ETH 4000");
+          chatId, "Please enter the coin ticker and its target price.\nFor example -> ETH 4000");
       return;
     }
 
@@ -40,44 +39,43 @@ public class RemoveMonitoringCommandProcessor implements CommandProcessor {
   private void processTickerAndPriceInput(Update update) {
     String[] inputParts = handleTickerInput(update, getChatId(update));
     if (inputParts != null) {
-      remove(inputParts[0].toUpperCase() + TICKER_CURRENCY, inputParts[1], getChatId(update));
+      remove(inputParts[0].toUpperCase() + USDT_TICKER, inputParts[1], getChatId(update));
     }
   }
 
-  private boolean isCoinAvailable(String ticker, BigDecimal price) {
+  private boolean isMonitoringExists(String ticker, BigDecimal price) {
     return !monitoringRepository.findByTickerAndTargetPrice(ticker, price).isEmpty();
   }
 
   private void remove(String ticker, String price, Long chatId) {
-
     Optional<BigDecimal> formattedPrice = formatPrice(price);
 
-    if (formattedPrice.isPresent() && isCoinAvailable(ticker, formattedPrice.get())) {
-
-      Monitorings =
-          monitoringRepository.findByUser_ChatIdAndTickerAndTargetPrice(
+    if (formattedPrice.isPresent() && isMonitoringExists(ticker, formattedPrice.get())) {
+      monitorings =
+          monitoringRepository.findByUserChatIdAndTickerAndTargetPrice(
               chatId, ticker, formattedPrice.get());
-      if (Monitorings == null) {
+      if (monitorings == null) {
         telegramBotClient.sendMessage(
             chatId, "The monitoring for " + ticker + " with price " + price + " was not found ❌");
       } else {
-        Monitorings.stream()
-            .forEach(
-                monitoring -> {
-                  monitoringRepository.delete(monitoring);
-                  telegramBotClient.sendMessage(
-                      chatId,
-                      "Successfully removed "
-                          + ticker
-                          + " from your monitoring with target price "
-                          + price
-                          + "✅");
-                });
+        monitorings.forEach(
+                monitoring -> {removeMonitoring(ticker, price, chatId, monitoring);});
       }
     } else {
       telegramBotClient.sendMessage(
-          chatId, "Please enter two values: the coin ticker and its current price ⚠️");
+          chatId, "Please enter two values: the coin ticker and its target price ⚠️");
     }
+  }
+
+  private void removeMonitoring(String ticker, String price, Long chatId, Monitoring monitoring) {
+    monitoringRepository.delete(monitoring);
+    telegramBotClient.sendMessage(
+            chatId,
+        "Successfully removed "
+            + ticker
+            + " from your monitoring with target price "
+            + price
+            + "✅");
   }
 
   private Long getChatId(Update update) {

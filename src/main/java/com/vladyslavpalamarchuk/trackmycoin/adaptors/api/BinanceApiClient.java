@@ -5,9 +5,7 @@ import java.math.BigDecimal;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -15,39 +13,11 @@ import org.springframework.web.client.RestTemplate;
 @Slf4j
 public class BinanceApiClient {
   private final String BINANCE_URL = "https://api.binance.com/api/v3/ticker/price?symbol=";
-  private final RestTemplate restTemplate = new RestTemplate();
-  private final String TICKER_CURRENCY = "USDT";
-
-  public boolean isCoinAvailable(String ticker) {
-    String url = BINANCE_URL + ticker.toUpperCase() + TICKER_CURRENCY;
-    try {
-      ResponseEntity<BinancePriceResponse> response =
-          restTemplate.getForEntity(url, BinancePriceResponse.class);
-      BinancePriceResponse priceResponse = response.getBody();
-
-      if (priceResponse != null && priceResponse.getSymbol() != null) {
-        log.info("Coin available: {}", priceResponse.getSymbol());
-        return true;
-      } else {
-        log.warn("Coin response is null or invalid for ticker: {}", ticker);
-        return false;
-      }
-    } catch (HttpClientErrorException.BadRequest e) {
-      if (e.getResponseBodyAsString().contains("Invalid symbol")) {
-        log.warn("Invalid symbol: {}", ticker);
-        return false;
-      }
-      throw e;
-    } catch (Exception e) {
-      log.error("Error while checking coin availability", e);
-      return false;
-    }
-  }
+  private final RestTemplate restTemplate;
 
   public Optional<BigDecimal> getPrice(String ticker) {
-    String url = BINANCE_URL + ticker;
+    String url = BINANCE_URL + ticker.toUpperCase();
     try {
-      RestTemplate restTemplate = new RestTemplate();
       BinancePriceResponse response = restTemplate.getForObject(url, BinancePriceResponse.class);
       if (response != null && response.getPrice() != null) {
         return Optional.of(response.getPrice());
@@ -56,8 +26,9 @@ public class BinanceApiClient {
         return Optional.empty();
       }
     } catch (Exception e) {
-      log.error("Failed to fetch price for ticker: {}. Error: {}", ticker, e.getMessage(), e);
+      log.warn("Failed to fetch price for ticker: {}. Error: {}", ticker, e.getMessage(), e);
       return Optional.empty();
     }
   }
+
 }

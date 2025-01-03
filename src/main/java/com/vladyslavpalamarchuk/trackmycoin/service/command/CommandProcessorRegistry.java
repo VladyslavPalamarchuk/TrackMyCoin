@@ -41,9 +41,7 @@ public class CommandProcessorRegistry {
             .filter(c -> c.getCommand().equalsIgnoreCase(finalMessageText))
             .findFirst()
             .orElse(Command.NON_COMMAND);
-
     userLastCommands.put(chatId, matchedCommand);
-
     return commandToProcessors.get(matchedCommand);
   }
 }
