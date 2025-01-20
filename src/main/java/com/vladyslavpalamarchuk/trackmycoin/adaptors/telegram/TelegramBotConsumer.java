@@ -1,6 +1,6 @@
 package com.vladyslavpalamarchuk.trackmycoin.adaptors.telegram;
 
-import com.vladyslavpalamarchuk.trackmycoin.command.CommandProcessorRegistry;
+import com.vladyslavpalamarchuk.trackmycoin.service.command.CommandProcessorRegistry;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -19,7 +19,9 @@ public class TelegramBotConsumer implements LongPollingSingleThreadUpdateConsume
   public void consume(Update update) {
     if (update.hasMessage() && update.getMessage().hasText()) {
       logUpdateMessage(update.getMessage());
-      commandProcessorRegistry.get(update.getMessage().getText()).process(update);
+      commandProcessorRegistry
+          .get(update.getMessage().getChatId(), update.getMessage().getText())
+          .process(update);
     }
   }
 

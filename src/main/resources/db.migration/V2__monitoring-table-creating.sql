@@ -2,7 +2,7 @@ CREATE TABLE monitorings
 (
     id           BIGSERIAL PRIMARY KEY,
     ticker       VARCHAR(100)                        NOT NULL,
-    target_price DECIMAL(18, 2)                      NOT NULL,
+    target_price DECIMAL(18, 8)                      NOT NULL,
     user_id      BIGINT                              NOT NULL,
     created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,

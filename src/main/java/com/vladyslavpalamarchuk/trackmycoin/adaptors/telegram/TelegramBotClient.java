@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import org.telegram.telegrambots.meta.generics.TelegramClient;
 
@@ -11,11 +12,22 @@ import org.telegram.telegrambots.meta.generics.TelegramClient;
 @Component
 @RequiredArgsConstructor
 public class TelegramBotClient {
-
   private final TelegramClient telegramClient;
 
   public void sendMessage(Long chatId, String messageText) {
     SendMessage message = SendMessage.builder().chatId(chatId).text(messageText).build();
+    try {
+      telegramClient.execute(message);
+    } catch (TelegramApiException e) {
+      log.error("Fail to send telegram message to chatId: {}", chatId, e);
+    }
+  }
+
+  public void sendMessageWithKeyboard(
+      Long chatId, String text, ReplyKeyboardMarkup keyboardMarkup) {
+    SendMessage message = SendMessage.builder().chatId(chatId).text(text).build();
+
+    message.setReplyMarkup(keyboardMarkup);
     try {
       telegramClient.execute(message);
     } catch (TelegramApiException e) {
